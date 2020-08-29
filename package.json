@@ -1,0 +1,22 @@
+{
+  "name": "raspberry-pi---lsm9ds1---javascript",
+  "version": "1.0.0",
+  "description": "A JS library to interface between a raspberry pi and the LSM9DS1 Orientation Chip",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robertIanClarkson/Raspberry-Pi---LSM9DS1---JavaScript.git"
+  },
+  "keywords": [
+    "LSM9DS0"
+  ],
+  "author": "Robert Clarkson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/robertIanClarkson/Raspberry-Pi---LSM9DS1---JavaScript/issues"
+  },
+  "homepage": "https://github.com/robertIanClarkson/Raspberry-Pi---LSM9DS1---JavaScript#readme"
+}
