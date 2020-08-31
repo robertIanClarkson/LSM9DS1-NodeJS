@@ -2,10 +2,10 @@ const i2c = require('i2c-bus');
 
 class LSM9DS0 {
   constructor(g_xl_address, m_address) {
-    this.sensor = undefined;
-    this.bufferSize = 1;
-    this.G_XL_ADDRESS  = g_xl_address;
-    this.M_ADDRESS = m_address;
+    this.sensor       = undefined;
+    this.bufferSize   = 1;
+    this.G_XL_ADDRESS = g_xl_address;
+    this.M_ADDRESS    = m_address;
     /* Gyro(G) & Accel(X) & Temp(T) */
     this.ACT_THS          = 0x04;
     this.ACT_DUR          = 0x05;
@@ -95,7 +95,7 @@ class LSM9DS0 {
         resolve('*** init: Success ***')
       })
       .catch(err => {
-        reject('init: FAILED open i2c bus')
+        reject('init --> FAILED open i2c bus')
       })
     })
   }
@@ -116,7 +116,7 @@ class LSM9DS0 {
     let set_i = 0x00;
     return new Promise((resolve, reject) => {
       /* check if sensor initiated */
-      if(sensor == undefined) reject('useFIFO: FAILED i2c bus is close')
+      if(sensor == undefined) reject('useFIFO --> FAILED i2c bus is close')
       /* Make the write */ 
       Promise.all([
         this.sensor.writeByte(this.G_XL_ADDRESS, this.CTRL_REG1_G,  set_a),
@@ -157,38 +157,183 @@ class LSM9DS0 {
           ){
             resolve('*** useFIFO: Success ***')
           } else {
-            reject('useFIFO: FAILED check')
+            reject('useFIFO --> FAILED check')
           }
         })
         .catch(err => {
-          reject(`useFIFO: FAILED to read : ${err}`)
+          reject(`useFIFO --> FAILED read: ${err}`)
         })
       })
       .catch(err => {
-        reject(`useFIFO: FAILED to write: ${err}`)
+        reject(`useFIFO --> FAILED write: ${err}`)
       })
     }) 
   }
 
-  readGyroBuffer() {
-    return
+  #readGyroBuffer() {
+    let x_low  = Buffer.alloc(this.bufferSize)
+    let x_high = Buffer.alloc(this.bufferSize)
+    let y_low  = Buffer.alloc(this.bufferSize)
+    let y_high = Buffer.alloc(this.bufferSize)
+    let z_low  = Buffer.alloc(this.bufferSize)
+    let z_high = Buffer.alloc(this.bufferSize)
+    return new Promise((resolve, reject) => {
+      if(this.sensor == undefined) reject('readGyroBuffer --> FAILED i2c bus is close')
+      Promise.all([
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_X_L_G, this.bufferSize, x_low ),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_X_H_G, this.bufferSize, x_high),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_Y_L_G, this.bufferSize, y_low ),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_Y_H_G, this.bufferSize, y_high),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_Z_L_G, this.bufferSize, z_low ),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_Z_H_G, this.bufferSize, z_high)
+      ])
+      .then(() => {
+        resolve([
+          x_low, x_high,
+          y_low, y_high,
+          y_low, z_high
+        ])
+      })
+      .catch(err => {
+        reject(`readGyroBuffer --> FAILED read: ${err}`)
+      })
+    })
   }
 
-  readAccelBuffer() {
-    return
+  #readAccelBuffer() {
+    let x_low  = Buffer.alloc(this.bufferSize)
+    let x_high = Buffer.alloc(this.bufferSize)
+    let y_low  = Buffer.alloc(this.bufferSize)
+    let y_high = Buffer.alloc(this.bufferSize)
+    let z_low  = Buffer.alloc(this.bufferSize)
+    let z_high = Buffer.alloc(this.bufferSize)
+    return new Promise((resolve, reject) => {
+      if(this.sensor == undefined) reject('readAccelBuffer --> FAILED i2c bus is close')
+      Promise.all([
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_X_L_XL, this.bufferSize, x_low ),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_X_H_XL, this.bufferSize, x_high),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_Y_L_XL, this.bufferSize, y_low ),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_Y_H_XL, this.bufferSize, y_high),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_Z_L_XL, this.bufferSize, z_low ),
+        this.sensor.readI2cBlock(this.G_XL_ADDRESS, this.OUT_Z_H_XL, this.bufferSize, z_high)
+      ])
+      .then(() => {
+        resolve([
+          x_low, x_high,
+          y_low, y_high,
+          y_low, z_high
+        ])
+      })
+      .catch(err => {
+        reject(`readAccelBuffer --> FAILED read: ${err}`)
+      })
+    })
   }
 
-  readMagBuffer() {
-    return
+  #readMagBuffer() {
+    let x_low  = Buffer.alloc(this.bufferSize)
+    let x_high = Buffer.alloc(this.bufferSize)
+    let y_low  = Buffer.alloc(this.bufferSize)
+    let y_high = Buffer.alloc(this.bufferSize)
+    let z_low  = Buffer.alloc(this.bufferSize)
+    let z_high = Buffer.alloc(this.bufferSize)
+    return new Promise((resolve, reject) => {
+      if(this.sensor == undefined) reject('readGyroBuffer --> FAILED i2c bus is close')
+      Promise.all([
+        this.sensor.readI2cBlock(this.M_ADDRESS, this.OUT_X_L_M, this.bufferSize, x_low ),
+        this.sensor.readI2cBlock(this.M_ADDRESS, this.OUT_X_H_M, this.bufferSize, x_high),
+        this.sensor.readI2cBlock(this.M_ADDRESS, this.OUT_Y_L_M, this.bufferSize, y_low ),
+        this.sensor.readI2cBlock(this.M_ADDRESS, this.OUT_Y_H_M, this.bufferSize, y_high),
+        this.sensor.readI2cBlock(this.M_ADDRESS, this.OUT_Z_L_M, this.bufferSize, z_low ),
+        this.sensor.readI2cBlock(this.M_ADDRESS, this.OUT_Z_H_M, this.bufferSize, z_high)
+      ])
+      .then(() => {
+        resolve([
+          x_low, x_high,
+          y_low, y_high,
+          y_low, z_high
+        ])
+      })
+      .catch(err => {
+        reject(`readGyroBuffer --> FAILED read: ${err}`)
+      })
+    })
   }
 
-  read() {
-    return
+  #convert(low, high) {
+    var converted = ((high & 0xFF) * 256 + (low & 0xFF))
+    if (converted > 32767) converted -= 65536
+    return converted
+  }
+
+  #average(low, high) {
+    let sum = 0;
+    for(i = 0; i < this.bufferSize; i++) {
+      sum += this.#convert(low[i], high[i])
+    }
+    return Math.floor(sum / this.bufferSize)
+  }
+
+  readAll() {
+    let div_gyro  = 256;
+    let div_accel = 256;
+    let div_mag   = 256;
+    let gyro_x,  gyro_y,  gyro_z;
+    let accel_x, accel_y, accel_z;
+    let mag_x,   mag_y,   mag_z;
+    return new Promise((resolve, reject) => {
+      if(this.sensor == undefined) reject('readAll --> FAILED i2c bus is close')
+      this.#readGyroBuffer()
+      .then(([x_low, x_high, y_low, y_high, z_low, z_high]) => {
+        gyro_x = this.#average(x_low, x_high) / div_gyro
+        gyro_y = this.#average(y_low, y_high) / div_gyro
+        gyro_z = this.#average(z_low, z_high) / div_gyro
+        this.#readAccelBuffer()
+        .then(([x_low, x_high, y_low, y_high, z_low, z_high]) => {
+          accel_x = this.#average(x_low, x_high) / div_accel
+          accel_y = this.#average(y_low, y_high) / div_accel
+          accel_z = this.#average(z_low, z_high) / div_accel
+          this.#readMagBuffer()
+          .then(([x_low, x_high, y_low, y_high, z_low, z_high]) => {
+            mag_x = this.#average(x_low, x_high) / div_mag
+            mag_y = this.#average(y_low, y_high) / div_mag
+            mag_z = this.#average(z_low, z_high) / div_mag
+            resolve({
+              gyro: {
+                x: gyro_x,
+                y: gyro_y,
+                z: gyro_z
+              },
+              accel: {
+                x: accel_x,
+                y: accel_y,
+                z: accel_z
+              },
+              mag: {
+                x: mag_x,
+                y: mag_y,
+                z: mag_z
+              }
+            })
+          })
+          .catch(err => {
+            reject(`readAll --> ${err}`)
+          })
+        })
+        .catch(err => {
+          reject(`readAll --> ${err}`)
+        })
+      })
+      .catch(err => {
+        reject(`readAll --> ${err}`)
+      })  
+    })
   }
 
   close() {
-    this.sensor.close()
-    this.sensor = undefined
+    this.sensor.close().then(() => {
+      this.sensor = undefined
+    }) 
   }
 }
 
