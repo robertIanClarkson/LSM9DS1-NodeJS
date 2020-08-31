@@ -1,15 +1,20 @@
 const LSM9DS1 = require('./LSM9DS1')
 
+var bus = 1;
+var bufferSize = 32;
+
 var g_xl_address = 0x00;
 var m_address    = 0x00;
 
 var sensor = new LSM9DS1(g_xl_address, m_address);
 
-sensor.setBufferSize(32)
-sensor.init(1)
-.then(() => {
+sensor.setBufferSize(bufferSize)
+sensor.init(bus)
+.then((message) => {
+  console.log(message)
   sensor.useFIFO()
-  .then(() => {
+  .then((message) => {
+    console.log(message)
     sensor.readAll()
     .then((result) => {
       console.log(`Gyro (X: ${result.gyro.x} Y: ${result.gyro.y} Z:${result.gyro.z})`)
