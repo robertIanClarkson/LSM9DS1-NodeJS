@@ -83,7 +83,7 @@ class LSM9DS1 {
     this.INT_THS_H_M      = 0x33;
   }
 
-  sleep(ms) {
+  #sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
@@ -331,9 +331,15 @@ class LSM9DS1 {
   }
 
   close() {
-    this.sensor.close().then(() => {
-      this.sensor = undefined
-    }) 
+    return new Promise((resolve, reject) => {
+      this.sensor.close().then(() => {
+        this.sensor = undefined
+        resolve('i2c bus successfully closed')
+      })
+      .catch(err => {
+        reject(`close --> Failed tp close i2c bus : ${err}`)
+      }) 
+    })
   }
 }
 
