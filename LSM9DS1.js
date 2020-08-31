@@ -113,7 +113,7 @@ class LSM9DS1 {
           } else if(whoami_m_key != this.#whoami_m_key) {
             reject('init --> FAILED WHO_AM_I check for mag')            
           } else {
-            resolve('*** init: Success ***')
+            resolve('init --> Success')
           }
         })
         .catch(err => {
@@ -182,7 +182,7 @@ class LSM9DS1 {
             h == set_h &&
             i == set_i
           ){
-            resolve('*** useFIFO: Success ***')
+            resolve('useFIFO --> Success')
           } else {
             reject('useFIFO --> FAILED check')
           }
@@ -359,14 +359,14 @@ class LSM9DS1 {
 
   close() {
     return new Promise((resolve, reject) => {
-      if(this.#sensor == undefined) reject(`close --> i2c bus already closed`)
+      if(this.#sensor == undefined) reject(`close --> i2c bus is already closed`)
       this.#sensor.close()
       .then(() => {
         this.#sensor = undefined
         resolve('i2c bus successfully closed')
       })
       .catch(err => {
-        reject(`close --> Failed tp close i2c bus : ${err}`)
+        reject(`close --> Failed to close i2c bus : ${err}`)
       }) 
     })
   }
