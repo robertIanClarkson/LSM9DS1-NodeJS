@@ -1,6 +1,6 @@
 const i2c = require('i2c-bus');
 
-class LSM9DS0 {
+class LSM9DS1 {
   constructor(g_xl_address, m_address) {
     this.sensor       = undefined;
     this.bufferSize   = 1;
@@ -337,4 +337,5 @@ class LSM9DS0 {
   }
 }
 
+module.exports = LSM9DS1
 
