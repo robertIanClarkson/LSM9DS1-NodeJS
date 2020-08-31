@@ -94,7 +94,7 @@ class LSM9DS1 {
     this.#M_ADDRESS    = m_address;
   }
 
-  #sleep(ms) {
+  sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
@@ -197,7 +197,7 @@ class LSM9DS1 {
     }) 
   }
 
-  #readGyroBuffer() {
+  readGyroBuffer() {
     let x_low  = Buffer.alloc(this.#bufferSize)
     let x_high = Buffer.alloc(this.#bufferSize)
     let y_low  = Buffer.alloc(this.#bufferSize)
@@ -227,7 +227,7 @@ class LSM9DS1 {
     })
   }
 
-  #readAccelBuffer() {
+  readAccelBuffer() {
     let x_low  = Buffer.alloc(this.#bufferSize)
     let x_high = Buffer.alloc(this.#bufferSize)
     let y_low  = Buffer.alloc(this.#bufferSize)
@@ -257,7 +257,7 @@ class LSM9DS1 {
     })
   }
 
-  #readMagBuffer() {
+  readMagBuffer() {
     let x_low  = Buffer.alloc(this.#bufferSize)
     let x_high = Buffer.alloc(this.#bufferSize)
     let y_low  = Buffer.alloc(this.#bufferSize)
@@ -287,16 +287,16 @@ class LSM9DS1 {
     })
   }
 
-  #convert(low, high) {
+  convert(low, high) {
     var converted = ((high & 0xFF) * 256 + (low & 0xFF))
     if (converted > 32767) converted -= 65536
     return converted
   }
 
-  #average(low, high) {
+  average(low, high) {
     let sum = 0;
     for(i = 0; i < this.#bufferSize; i++) {
-      sum += this.#convert(low[i], high[i])
+      sum += this.convert(low[i], high[i])
     }
     return Math.floor(sum / this.#bufferSize)
   }
@@ -310,21 +310,21 @@ class LSM9DS1 {
     let mag_x,   mag_y,   mag_z;
     return new Promise((resolve, reject) => {
       if(this.#sensor == undefined) reject('readAll --> FAILED i2c bus is close')
-      this.#readGyroBuffer()
+      this.readGyroBuffer()
       .then(([x_low, x_high, y_low, y_high, z_low, z_high]) => {
-        gyro_x = this.#average(x_low, x_high) / div_gyro
-        gyro_y = this.#average(y_low, y_high) / div_gyro
-        gyro_z = this.#average(z_low, z_high) / div_gyro
-        this.#readAccelBuffer()
+        gyro_x = this.average(x_low, x_high) / div_gyro
+        gyro_y = this.average(y_low, y_high) / div_gyro
+        gyro_z = this.average(z_low, z_high) / div_gyro
+        this.readAccelBuffer()
         .then(([x_low, x_high, y_low, y_high, z_low, z_high]) => {
-          accel_x = this.#average(x_low, x_high) / div_accel
-          accel_y = this.#average(y_low, y_high) / div_accel
-          accel_z = this.#average(z_low, z_high) / div_accel
-          this.#readMagBuffer()
+          accel_x = this.average(x_low, x_high) / div_accel
+          accel_y = this.average(y_low, y_high) / div_accel
+          accel_z = this.average(z_low, z_high) / div_accel
+          this.readMagBuffer()
           .then(([x_low, x_high, y_low, y_high, z_low, z_high]) => {
-            mag_x = this.#average(x_low, x_high) / div_mag
-            mag_y = this.#average(y_low, y_high) / div_mag
-            mag_z = this.#average(z_low, z_high) / div_mag
+            mag_x = this.average(x_low, x_high) / div_mag
+            mag_y = this.average(y_low, y_high) / div_mag
+            mag_z = this.average(z_low, z_high) / div_mag
             resolve({
               gyro: {
                 x: gyro_x,
