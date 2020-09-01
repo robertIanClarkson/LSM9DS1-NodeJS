@@ -1,7 +1,8 @@
 const i2c = require('i2c-bus');
+// g_mx_address = 0x6b
+// m_address    = 0x3d
 
-class LSM9DS1 {
-  
+class LSM9DS1 {  
   /* HARDWARE REGISTERS */
   /* Gyro(G) & Accel(X) & Temp(T) */
   #ACT_THS          = 0x04
