@@ -296,7 +296,7 @@ class LSM9DS1 {
 
   #average(low, high) {
     let sum = 0;
-    for(i = 0; i < this.#bufferSize; i++) {
+    for(let i = 0; i < this.#bufferSize; i++) {
       sum += this.#convert(low[i], high[i])
     }
     return Math.floor(sum / this.#bufferSize)
