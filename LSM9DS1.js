@@ -1,6 +1,6 @@
 const i2c = require('i2c-bus');
-// g_mx_address = 0x6b
-// m_address    = 0x3d
+// g_mx_address = 0x6B
+// m_address    = 0x1E
 
 class LSM9DS1 {  
   /* HARDWARE REGISTERS */
@@ -136,11 +136,11 @@ class LSM9DS1 {
     let set_a = 0x00;
     let set_b = 0x00;
     let set_c = 0x00;
-    let set_d = 0x00;
-    let set_e = 0x00;
+    let set_d = 0x38;
+    let set_e = 0x38;
     let set_f = 0x00;
     let set_g = 0x00;
-    let set_h = 0x00;
+    let set_h = 0x04;
     let set_i = 0x00;
     return new Promise((resolve, reject) => {
       /* check if sensor initiated */
