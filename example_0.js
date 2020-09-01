@@ -4,8 +4,8 @@ const rpio = require('rpio')
 var bus = 1;
 var bufferSize = 32;
 
-var g_xl_address = 0x6b;
-var m_address = 0x3d;
+var g_xl_address = 0x6B;
+var m_address = 0x1E;
 
 var sensor = new LSM9DS1(g_xl_address, m_address);
 
