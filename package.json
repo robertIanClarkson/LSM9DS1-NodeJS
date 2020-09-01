@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/robertIanClarkson/Raspberry-Pi---LSM9DS1---JavaScript#readme",
   "dependencies": {
-    "i2c-bus": "^5.2.0"
+    "i2c-bus": "^5.2.0",
+    "rpio": "^2.2.0"
   }
 }
