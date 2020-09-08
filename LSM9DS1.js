@@ -2,6 +2,18 @@ const i2c = require('i2c-bus');
 // g_mx_address = 0x6B
 // m_address    = 0x1E
 
+/*
+  CTRL_REG1_G  = 0x00
+  CTRL_REG2_G  = 0x00
+  CTRL_REG3_G  = 0x00
+  CTRL_REG4    = 0x38
+  CTRL_REG5_XL = 0x38
+  CTRL_REG6_XL = 0x00
+  CTRL_REG7_XL = 0x00
+  CTRL_REG8    = 0x04 
+  CTRL_REG9    = 0x00
+*/
+
 class LSM9DS1 {  
   /* HARDWARE REGISTERS */
   /* Gyro(G) & Accel(X) & Temp(T) */
@@ -133,29 +145,39 @@ class LSM9DS1 {
   }
 
   useFIFO() {
-    let set_a = 0x00;
-    let set_b = 0x00;
-    let set_c = 0x00;
-    let set_d = 0x38;
-    let set_e = 0x38;
-    let set_f = 0x00;
-    let set_g = 0x00;
-    let set_h = 0x04;
-    let set_i = 0x00;
+    /* g_xl */
+    let set_g_xl_1  = 0x38;
+    let set_g_xl_2  = 0x00;
+    let set_g_xl_3  = 0x00;
+    let set_g_xl_4  = 0x38;
+    let set_g_xl_5  = 0x38;
+    let set_g_xl_6  = 0x30;
+    let set_g_xl_7  = 0x00;
+    let set_g_xl_8  = 0x04;
+    let set_g_xl_9  = 0x00;
+    let set_g_xl_10 = 0x00;
+    /* mag */
+    // NEED TO SET THESE 
+    let set_m_1  = 0x38;
+    let set_m_2  = 0x00;
+    let set_m_3  = 0x00;
+    let set_m_4  = 0x38;
+    let set_m_5  = 0x38;
     return new Promise((resolve, reject) => {
       /* check if sensor initiated */
       if(this.#sensor == undefined) reject('useFIFO --> FAILED i2c bus is close')
       /* Make the write */ 
       Promise.all([
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG1_G,  set_a),
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG2_G,  set_b), 
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG3_G,  set_c),
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG4,    set_d),
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG5_XL, set_e),
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG6_XL, set_f),
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG7_XL, set_g),
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG8,    set_h),
-        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG9,    set_i)
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG1_G,  set_g_xl_1  ),
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG2_G,  set_g_xl_2  ), 
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG3_G,  set_g_xl_3  ),
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG4,    set_g_xl_4  ),
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG5_XL, set_g_xl_5  ),
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG6_XL, set_g_xl_6  ),
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG7_XL, set_g_xl_7  ),
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG8,    set_g_xl_8  ),
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG9,    set_g_xl_9  ),
+        this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG10,    set_g_xl_10)
       ])
       .then(() => {
         /* Read the bytes we just wrote */
@@ -168,33 +190,61 @@ class LSM9DS1 {
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG6_XL),
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG7_XL),
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG8   ),
-          this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG9   )
+          this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG9   ),
+          this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG10  )
         ])
-        .then(([a, b, c, d, e, f, g, h, i]) => {
+        .then(([res_g_xl_1, res_g_xl_2, res_g_xl_3, res_g_xl_4, res_g_xl_5, res_g_xl_6, res_g_xl_7, res_g_xl_8, res_g_xl_9, res_g_xl_10]) => {
           /* Check to make sure the write was successful */
           if(
-            a == set_a &&
-            b == set_b &&
-            c == set_c &&
-            d == set_d &&
-            e == set_e &&
-            f == set_f &&
-            g == set_g &&
-            h == set_h &&
-            i == set_i
+            res_g_xl_1  != set_g_xl_1  ||
+            res_g_xl_2  != set_g_xl_2  ||
+            res_g_xl_3  != set_g_xl_3  ||
+            res_g_xl_4  != set_g_xl_4  ||
+            res_g_xl_5  != set_g_xl_5  ||
+            res_g_xl_6  != set_g_xl_6  ||
+            res_g_xl_7  != set_g_xl_7  ||
+            res_g_xl_8  != set_g_xl_8  ||
+            res_g_xl_9  != set_g_xl_9  ||
+            res_g_xl_10 != set_g_xl_10
           ){
-            resolve('useFIFO --> Success')
+            reject('useFIFO --> FAILED gyro/accel check')
           } else {
-            reject('useFIFO --> FAILED check')
+            Promise.all([
+              this.#sensor.writeByte(this.#M_ADDRESS, this.#CTRL_REG1_M, set_m_1),
+              this.#sensor.writeByte(this.#M_ADDRESS, this.#CTRL_REG2_M, set_m_2),
+              this.#sensor.writeByte(this.#M_ADDRESS, this.#CTRL_REG3_M, set_m_3),
+              this.#sensor.writeByte(this.#M_ADDRESS, this.#CTRL_REG4_M, set_m_4),
+              this.#sensor.writeByte(this.#M_ADDRESS, this.#CTRL_REG5_M, set_m_5)
+            ])
+            .then(() => {
+              Promise.all([
+                this.#sensor.readByte(this.#M_ADDRESS, this.#CTRL_REG1_M),
+                this.#sensor.readByte(this.#M_ADDRESS, this.#CTRL_REG2_M),
+                this.#sensor.readByte(this.#M_ADDRESS, this.#CTRL_REG3_M),
+                this.#sensor.readByte(this.#M_ADDRESS, this.#CTRL_REG4_M),
+                this.#sensor.readByte(this.#M_ADDRESS, this.#CTRL_REG5_M)
+              ])
+              .then(([res_m_1, res_m_2, res_m_3, res_m_4, res_m_5]) => {
+                if(
+                  res_m_1  != set_m_1  ||
+                  res_m_2  != set_m_2  ||
+                  res_m_3  != set_m_3  ||
+                  res_m_4  != set_m_4  ||
+                  res_m_5  != set_m_5
+                ){
+                  reject('useFIFO --> FAILED mag check')
+                } else {
+                  resolve('useFIFO --> Success')
+                }
+              })
+              .catch(err => { reject(`useFIFO --> FAILED mag read: ${err}`) })
+            })
+            .catch(err => { reject(`useFIFO --> FAILED mag write: ${err}`) })
           }
         })
-        .catch(err => {
-          reject(`useFIFO --> FAILED read: ${err}`)
-        })
+        .catch(err => { reject(`useFIFO --> FAILED gyro/accel read: ${err}`) })
       })
-      .catch(err => {
-        reject(`useFIFO --> FAILED write: ${err}`)
-      })
+      .catch(err => { reject(`useFIFO --> FAILED gyro/accel write: ${err}`) })
     }) 
   }
 
