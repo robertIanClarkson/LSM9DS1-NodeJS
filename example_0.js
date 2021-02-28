@@ -9,6 +9,12 @@ var m_address = 0x1E;
 
 var sensor = new LSM9DS1(g_xl_address, m_address);
 
+/************************************************ */
+function foo(pin) {
+  console.log('FOO: ' + pin);
+}
+/************************************************ */
+
 function read() {
   sensor.readAll()
     .then((result) => {
@@ -25,7 +31,7 @@ sensor.init(bus)
     sensor.useFIFO()
       .then((message) => {
         console.log(message)
-        rpio.poll(11, read, rpio.POLL_HIGH);
+        rpio.poll(11, foo, rpio.POLL_BOTH);
       })
       .catch(err => { console.log(err) })
   })
