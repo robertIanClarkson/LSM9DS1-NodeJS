@@ -1,5 +1,8 @@
 const LSM9DS1 = require('./LSM9DS1')
-const rpio = require('rpio')
+const rpio = require('rpio');
+
+rpio.open(15, rpio.INPUT);
+rpio.open(37, rpio.OUTPUT, rpio.LOW);
 
 var bus = 1;
 var bufferSize = 32;
@@ -31,7 +34,11 @@ sensor.init(bus)
     sensor.useFIFO()
       .then((message) => {
         console.log(message)
-        rpio.poll(11, foo, rpio.POLL_BOTH);
+        rpio.poll(15, foo, rpio.POLL_BOTH)
+        console.log("Polling")
+        rpio.sleep(2);
+        rpio.write(37, rpio.HIGH);
+
       })
       .catch(err => { console.log(err) })
   })
