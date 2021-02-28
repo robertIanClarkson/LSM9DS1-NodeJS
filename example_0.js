@@ -2,7 +2,7 @@ const LSM9DS1 = require('./LSM9DS1')
 const rpio = require('rpio');
 
 rpio.open(15, rpio.INPUT);
-rpio.open(37, rpio.OUTPUT, rpio.LOW);
+rpio.open(36, rpio.OUTPUT, rpio.LOW);
 
 var bus = 1;
 var bufferSize = 32;
@@ -15,6 +15,7 @@ var sensor = new LSM9DS1(g_xl_address, m_address);
 /************************************************ */
 function foo(pin) {
   console.log('FOO: ' + pin);
+  rpio.poll(pin, null);
 }
 /************************************************ */
 
@@ -37,7 +38,9 @@ sensor.init(bus)
         rpio.poll(15, foo, rpio.POLL_BOTH)
         console.log("Polling")
         rpio.sleep(2);
-        rpio.write(37, rpio.HIGH);
+        rpio.write(36, rpio.HIGH);
+	rpio.sleep(2);
+	
 
       })
       .catch(err => { console.log(err) })
