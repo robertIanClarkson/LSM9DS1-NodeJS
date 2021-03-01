@@ -386,39 +386,53 @@ class LSM9DS1 {
           accel_x = this.#average(x_low, x_high) / div_accel
           accel_y = this.#average(y_low, y_high) / div_accel
           accel_z = this.#average(z_low, z_high) / div_accel
-          this.#readMagBuffer()
-          .then(([x_low, x_high, y_low, y_high, z_low, z_high]) => {
-            mag_x = this.#average(x_low, x_high) / div_mag
-            mag_y = this.#average(y_low, y_high) / div_mag
-            mag_z = this.#average(z_low, z_high) / div_mag
-            resolve({
-              gyro: {
-                x: gyro_x,
-                y: gyro_y,
-                z: gyro_z
-              },
-              accel: {
-                x: accel_x,
-                y: accel_y,
-                z: accel_z
-              },
-              mag: {
-                x: mag_x,
-                y: mag_y,
-                z: mag_z
-              }
-            })
+
+          resolve({
+            gyro: {
+              x: gyro_x,
+              y: gyro_y,
+              z: gyro_z
+            },
+            accel: {
+              x: accel_x,
+              y: accel_y,
+              z: accel_z
+            }
           })
-          .catch(err => {
-            reject(`readAll --> ${err}`)
-          })
+
+          // this.#readMagBuffer()
+          // .then(([x_low, x_high, y_low, y_high, z_low, z_high]) => {
+          //   mag_x = this.#average(x_low, x_high) / div_mag
+          //   mag_y = this.#average(y_low, y_high) / div_mag
+          //   mag_z = this.#average(z_low, z_high) / div_mag
+          //   resolve({
+          //     gyro: {
+          //       x: gyro_x,
+          //       y: gyro_y,
+          //       z: gyro_z
+          //     },
+          //     accel: {
+          //       x: accel_x,
+          //       y: accel_y,
+          //       z: accel_z
+          //     },
+          //     mag: {
+          //       x: mag_x,
+          //       y: mag_y,
+          //       z: mag_z
+          //     }
+          //   })
+          // })
+          // .catch(err => {
+          //   reject(`readAll --> ${err}`)
+          // })
         })
         .catch(err => {
-          reject(`readAll --> ${err}`)
+          reject(`readAll --> readAccelBuffer: ${err}`)
         })
       })
       .catch(err => {
-        reject(`readAll --> ${err}`)
+        reject(`readAll --> readGyroBuffer: ${err}`)
       })  
     })
   }
