@@ -14,17 +14,24 @@ var sensor = new LSM9DS1(g_xl_address, m_address);
 
 count = 1;
 function foo() {
-  sensor.checkFIFO().then((result) => {
-    console.log(`\tFIFO Buffer Size: ${result}`)
-    if(result == 160) {
-      console.log("\nCOUNT: " + count)
-      count += 1
-      console.log(`Gyro (X: ${result.gyro.x} Y: ${result.gyro.y} Z:${result.gyro.z})`)
-      console.log(`Accel(X: ${result.accel.x} Y: ${result.accel.y} Z:${result.accel.z})`)
+  sensor.checkFIFO().then((fifoSize) => {
+    console.log(`\tFIFO Buffer Size: ${fifoSize}`)
+    if(fifoSize == 160) {
+      sensor.readAll()
+      .then((result) => {
+        console.log("\nCOUNT: " + count)
+        count += 1
+        console.log(`Gyro (X: ${result.gyro.x} Y: ${result.gyro.y} Z:${result.gyro.z})`)
+        console.log(`Accel(X: ${result.accel.x} Y: ${result.accel.y} Z:${result.accel.z})`)
+        // console.log(`Mag  (X: ${result.mag.x} Y: ${result.mag.x} Z:${result.mag.x} HEADING:${180 * Math.atan2(result.mag.y, result.mag.x) / Math.PI})\n`)
+        foo()
+      })
+      .catch(err => { reject(`example read --> readAll: ${err}`) })
+    } else {
+      sensor.sleep(10).then(() => {
+        foo()
+      })
     }
-    sensor.sleep(10).then(() => {
-      foo()
-    })
   })
 }
 
