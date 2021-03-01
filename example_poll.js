@@ -16,7 +16,7 @@ var sensor = new LSM9DS1(g_xl_address, m_address);
 function foo() {
   sensor.checkFIFO().then((result) => {
     console.log(`FIFO Buffer Size: ${result}`)
-    sensor.sleep(500).then(() => {
+    sensor.sleep(100).then(() => {
       foo()
     })
   })
