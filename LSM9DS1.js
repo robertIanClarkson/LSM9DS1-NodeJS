@@ -245,7 +245,7 @@ class LSM9DS1 {
                     this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL, 0x00)
                   ])
                   .then(() => {
-                    this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL, 0x2F)
+                    this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL, 0x3F)
                     .then(() => { resolve('useFIFO --> Success')})
                     .catch(err => { reject(`useFIFO --> FAILED fifo(start) write: ${err}`)}) 
                   })
