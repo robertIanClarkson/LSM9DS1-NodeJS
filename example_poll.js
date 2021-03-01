@@ -12,7 +12,6 @@ var m_address = 0x1E;
 
 var sensor = new LSM9DS1(g_xl_address, m_address);
 
-/************************************************ */
 function foo() {
   sensor.checkFIFO().then((result) => {
     console.log(`\tFIFO Buffer Size: ${result}`)
@@ -21,24 +20,20 @@ function foo() {
     })
   })
 }
-/************************************************ */
+
 count = 0;
 function read() {
   return new Promise((resolve, reject) => {
-    sensor.checkFIFO().then((res) => {
-      console.log(`FIFO SIZE START: ${res}`)
-      sensor.readAll().then((result) => {
+    sensor.readAll()
+      .then((result) => {
         console.log("\nCOUNT: " + count)
         count += 1
         console.log(`Gyro (X: ${result.gyro.x} Y: ${result.gyro.y} Z:${result.gyro.z})`)
         console.log(`Accel(X: ${result.accel.x} Y: ${result.accel.y} Z:${result.accel.z})`)
         console.log(`Mag  (X: ${result.mag.x} Y: ${result.mag.x} Z:${result.mag.x} HEADING:${180 * Math.atan2(result.mag.y, result.mag.x) / Math.PI})\n`)
-        sensor.checkFIFO().then((res) => {
-          console.log(`FIFO SIZE END: ${res}`)
-          resolve('read success')
-        }).catch(err => { reject(`example read --> checkFIFO END: ${err}`) })
-      }).catch(err => { reject(`example read --> checkFIFO readAll: ${err}`) })
-    }).catch(err => { reject(`example read --> checkFIFO START: ${err}`) })
+        resolve()
+      })
+      .catch(err => { reject(`example read --> readAll: ${err}`) })
   })
 }
 
@@ -54,9 +49,11 @@ sensor.init(bus).then((message) => {
   sensor.useFIFO().then((message) => {
     console.log(message)
     console.log("Starting Polling")
-    rpio.poll(36, fifoFull, rpio.POLL_HIGH)
-    console.log("Watching Buffer Size")
-    foo()    
+    try{
+      rpio.poll(36, read, rpio.POLL_HIGH)
+    } catch(err) {
+      console.log(`***ERROR: ${err}`)
+    }  
   })
   .catch(err => { console.log(err) })
 })
