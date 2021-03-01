@@ -48,12 +48,15 @@ sensor.init(bus).then((message) => {
   console.log(message)
   sensor.useFIFO().then((message) => {
     console.log(message)
-    console.log("Starting Polling")
-    try{
-      rpio.poll(36, read, rpio.POLL_HIGH)
-    } catch(err) {
-      console.log(`***ERROR: ${err}`)
-    }  
+
+    foo()
+
+    // console.log("Starting Polling")
+    // try{
+    //   rpio.poll(36, read, rpio.POLL_HIGH)
+    // } catch(err) {
+    //   console.log(`***ERROR: ${err}`)
+    // }  
   })
   .catch(err => { console.log(err) })
 })
