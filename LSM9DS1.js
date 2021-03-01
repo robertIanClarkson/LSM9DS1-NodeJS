@@ -163,6 +163,10 @@ class LSM9DS1 {
     let set_m_3  = 0x00;
     let set_m_4  = 0x38;
     let set_m_5  = 0x38;
+
+    /* FIFO */
+    let set_fifo = 0x3F;
+
     return new Promise((resolve, reject) => {
       /* check if sensor initiated */
       if(this.#sensor == undefined) reject('useFIFO --> FAILED i2c bus is close')
@@ -234,7 +238,24 @@ class LSM9DS1 {
                 ){
                   reject('useFIFO --> FAILED mag check')
                 } else {
-                  resolve('useFIFO --> Success')
+                  // need to write to FIFO registers
+                  Promise.all([
+                    this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL, set_fifo)
+                  ])
+                  .then(() => {
+                    Promise.all([
+                      this.#sensor.readByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL)
+                    ])
+                    .then(([res_fifo]) => {
+                      if(res_fifo != set_fifo) {
+                        reject('useFIFO --> FAILED fifo check')
+                      } else {
+                        resolve('useFIFO --> Success')
+                      }
+                    })
+                    .catch(err => { reject(`useFIFO --> FAILED fifo read: ${err}`)})
+                  })
+                  .catch(err => { reject(`useFIFO --> FAILED fifo write: ${err}`)}) 
                 }
               })
               .catch(err => { reject(`useFIFO --> FAILED mag read: ${err}`) })
@@ -407,6 +428,17 @@ class LSM9DS1 {
       })  
     })
   }
+
+
+  checkFIFO() {
+    return new Promise((resolve, reject) => {
+      this.#sensor.readByte(this.#G_XL_ADDRESS, this.#FIFO_SRC).then((res_fifo_check) => {
+        resolve(res_fifo_check)
+      })
+      .catch(err => { reject(`checkFIFO --> FAILED to read: ${err}`)})
+    })
+  }
+
 
   close() {
     return new Promise((resolve, reject) => {
