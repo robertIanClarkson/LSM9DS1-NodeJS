@@ -194,7 +194,7 @@ class LSM9DS1 {
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG6_XL),
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG7_XL),
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG8   ),
-          this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG9   ),
+          // this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG9   ),
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG10  )
         ])
         .then(([res_g_xl_1, res_g_xl_2, res_g_xl_3, res_g_xl_4, res_g_xl_5, res_g_xl_6, res_g_xl_7, res_g_xl_8, res_g_xl_9, res_g_xl_10]) => {
@@ -240,22 +240,16 @@ class LSM9DS1 {
                 } else {
                   // need to write to FIFO registers
                   Promise.all([
-                    this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL, set_fifo)
+                    this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#INT1_CTRL, 0x08),
+                    this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#CTRL_REG9, 0x03),
+                    this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL, 0x00)
                   ])
                   .then(() => {
-                    Promise.all([
-                      this.#sensor.readByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL)
-                    ])
-                    .then(([res_fifo]) => {
-                      if(res_fifo != set_fifo) {
-                        reject('useFIFO --> FAILED fifo check')
-                      } else {
-                        resolve('useFIFO --> Success')
-                      }
-                    })
-                    .catch(err => { reject(`useFIFO --> FAILED fifo read: ${err}`)})
+                    this.#sensor.writeByte(this.#G_XL_ADDRESS, this.#FIFO_CTRL, 0x2F)
+                    .then(() => { resolve('useFIFO --> Success')})
+                    .catch(err => { reject(`useFIFO --> FAILED fifo(start) write: ${err}`)}) 
                   })
-                  .catch(err => { reject(`useFIFO --> FAILED fifo write: ${err}`)}) 
+                  .catch(err => { reject(`useFIFO --> FAILED fifo(setup) write: ${err}`)}) 
                 }
               })
               .catch(err => { reject(`useFIFO --> FAILED mag read: ${err}`) })
