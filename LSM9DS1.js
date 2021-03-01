@@ -146,12 +146,12 @@ class LSM9DS1 {
 
   useFIFO() {
     /* g_xl */
-    let set_g_xl_1  = 0x38;
+    let set_g_xl_1  = 0x78;
     let set_g_xl_2  = 0x00;
     let set_g_xl_3  = 0x00;
     let set_g_xl_4  = 0x38;
     let set_g_xl_5  = 0x38;
-    let set_g_xl_6  = 0x30;
+    let set_g_xl_6  = 0x70;
     let set_g_xl_7  = 0x00;
     let set_g_xl_8  = 0x04;
     let set_g_xl_9  = 0x00;

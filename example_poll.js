@@ -15,7 +15,7 @@ var sensor = new LSM9DS1(g_xl_address, m_address);
 count = 1;
 function foo() {
   sensor.checkFIFO().then((fifoSize) => {
-    console.log(`\tFIFO Buffer Size: ${fifoSize}`)
+    // console.log(`\tFIFO Buffer Size: ${fifoSize}`)
     if(fifoSize == 160) {
       sensor.readAll()
       .then((result) => {
