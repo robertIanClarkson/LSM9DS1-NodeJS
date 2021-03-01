@@ -12,16 +12,22 @@ var m_address = 0x1E;
 
 var sensor = new LSM9DS1(g_xl_address, m_address);
 
+count = 1;
 function foo() {
   sensor.checkFIFO().then((result) => {
     console.log(`\tFIFO Buffer Size: ${result}`)
-    sensor.sleep(100).then(() => {
+    if(result == 160) {
+      console.log("\nCOUNT: " + count)
+      count += 1
+      console.log(`Gyro (X: ${result.gyro.x} Y: ${result.gyro.y} Z:${result.gyro.z})`)
+      console.log(`Accel(X: ${result.accel.x} Y: ${result.accel.y} Z:${result.accel.z})`)
+    }
+    sensor.sleep(10).then(() => {
       foo()
     })
   })
 }
 
-count = 0;
 function read() {
   return new Promise((resolve, reject) => {
     sensor.readAll()
