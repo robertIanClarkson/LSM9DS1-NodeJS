@@ -194,7 +194,7 @@ class LSM9DS1 {
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG6_XL),
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG7_XL),
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG8   ),
-          // this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG9   ),
+          this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG9   ),
           this.#sensor.readByte(this.#G_XL_ADDRESS, this.#CTRL_REG10  )
         ])
         .then(([res_g_xl_1, res_g_xl_2, res_g_xl_3, res_g_xl_4, res_g_xl_5, res_g_xl_6, res_g_xl_7, res_g_xl_8, res_g_xl_9, res_g_xl_10]) => {

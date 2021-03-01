@@ -43,11 +43,10 @@ sensor.init(bus).then((message) => {
   console.log(message)
   sensor.useFIFO().then((message) => {
     console.log(message)
-    // rpio.poll(15, read, rpio.POLL_HIGH)
-    // console.log("Polling")
-    read().then((result) => {
-      console.log(result)
-    })
+    while(true) {
+      sensor.checkFIFO()
+      rpio.sleep(1)
+    }
   })
   .catch(err => { console.log(err) })
 })
