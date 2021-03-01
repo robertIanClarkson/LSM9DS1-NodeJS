@@ -15,7 +15,7 @@ var sensor = new LSM9DS1(g_xl_address, m_address);
 /************************************************ */
 function foo() {
   sensor.checkFIFO().then((result) => {
-    console.log(`FIFO Buffer Size: ${result}`)
+    console.log(`\tFIFO Buffer Size: ${result}`)
     sensor.sleep(100).then(() => {
       foo()
     })
@@ -42,6 +42,10 @@ function read() {
   })
 }
 
+function fifoFull(pin) {
+  console.log('*** FIFO FULL ***')
+}
+
 
 
 sensor.setBufferSize(bufferSize)
@@ -49,7 +53,10 @@ sensor.init(bus).then((message) => {
   console.log(message)
   sensor.useFIFO().then((message) => {
     console.log(message)
-    foo()
+    console.log("Starting Polling")
+    rpio.poll(36, fifoFull, rpio.POLL_HIGH)
+    console.log("Watching Buffer Size")
+    foo()    
   })
   .catch(err => { console.log(err) })
 })
