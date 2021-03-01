@@ -20,20 +20,24 @@ function foo(pin) {
 /************************************************ */
 count = 0;
 function read() {
-  sensor.readAll()
+  sensor.checkFIFO().then((res) => {
+    console.log(`FIFO SIZE START: ${res}`)
+    sensor.readAll()
     .then((result) => {
       console.log("\nCOUNT: " + count)
       count += 1
       console.log(`Gyro (X: ${result.gyro.x} Y: ${result.gyro.y} Z:${result.gyro.z})`)
       console.log(`Accel(X: ${result.accel.x} Y: ${result.accel.y} Z:${result.accel.z})`)
       console.log(`Mag  (X: ${result.mag.x} Y: ${result.mag.x} Z:${result.mag.x} HEADING:${180 * Math.atan2(result.mag.y, result.mag.x) / Math.PI})\n`)
+      sensor.checkFIFO().then((res) => {
+        console.log(`FIFO SIZE END: ${res}`)
     })
+  })
+  
 }
 
 function specialRead() {
-  sensor.checkFIFO().then((res) => {
-    console.log(`FIFO SIZE: ${res}`)
-  })
+  
 }
 
 sensor.setBufferSize(bufferSize)
@@ -43,10 +47,8 @@ sensor.init(bus).then((message) => {
     console.log(message)
     // rpio.poll(15, read, rpio.POLL_HIGH)
     // console.log("Polling")
-    specialRead();
     while(true) {
       read();
-      specialRead();
       rpio.sleep(1);
     }
     
