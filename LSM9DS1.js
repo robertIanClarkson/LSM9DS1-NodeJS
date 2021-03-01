@@ -107,7 +107,7 @@ class LSM9DS1 {
     this.#M_ADDRESS    = m_address;
   }
 
-  #sleep(ms) {
+  sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
